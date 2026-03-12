@@ -294,34 +294,336 @@ SET new_order_placement_date =
 STR_TO_DATE(order_placement_date,'%d-%b-%y');
 ```
 
+---# 🧩 SQL Business Questions Solved
+
+
+The analysis focuses on **order performance, delivery efficiency, product demand, and customer service metrics**.
+
+These queries demonstrate the use of:
+
+* Joins
+* Aggregations
+* Date Functions
+* Conditional Logic
+* Subqueries
+* Common Table Expressions (CTEs)
+
 ---
 
-# ❓ Business Questions Solved Using SQL
+# 📊 Order Analysis
 
-The following business questions were analyzed using SQL.
+### 1️⃣ How many orders were placed in each month?
 
-1. How many orders were placed in each month?
-2. What is the weekly trend of late deliveries?
-3. Identify the month with the highest number of orders that were not delivered in full.
-4. Find the difference between agreed delivery dates and actual delivery dates for all orders.
-5. What is the OTIF performance for each city?
-6. What is the total number of orders delivered late?
-7. List the product categories along with the number of unique products in each category.
-8. Identify the busiest week in terms of order placement.
-9. Which product categories perform best in terms of meeting OTIF targets?
-10. What is the percentage of orders that met OTIF criteria?
-11. How many orders were placed on weekends versus weekdays?
-12. How many orders were delivered on time but not in full?
-13. Which product category has the highest order quantity?
-14. Calculate the percentage of orders delivered on-time for each customer.
-15. Calculate the percentage of orders successfully delivered (delivery_qty = order_qty).
-16. For each product category, calculate the percentage of orders delivered on time.
-17. Show the customers who exceeded their "ontime_target %".
-18. Find customers who placed orders with total quantity greater than average order quantity.
-19. Identify customers performing below target for both OT and IF metrics.
-20. Identify customers with OT and IF performance below 80%.
-21. Calculate monthly OT% and IF% per customer and compare with targets.
-22. Identify categories with highest and lowest on-time delivery rates.
+```sql
+SELECT d.new_mmm_yy AS Month, COUNT(f.order_id) AS total_orders
+FROM fact_orders_aggregate f
+JOIN dim_date d ON f.new_order_placement_date = d.new_date
+GROUP BY d.new_mmm_yy;
+```
+
+---
+
+### 2️⃣ What is the weekly trend of late deliveries?
+
+```sql
+SELECT d.week_no, COUNT(f.order_id) AS late_deliveries
+FROM fact_orders_aggregate f
+JOIN dim_date d ON f.new_order_placement_date = d.new_date
+WHERE f.on_time = 0
+GROUP BY d.week_no
+ORDER BY d.week_no;
+```
+
+---
+
+### 3️⃣ Identify the month with the highest number of orders that were not delivered in full
+
+```sql
+SELECT d.new_mmm_yy AS Month, COUNT(f.order_id) AS not_in_full_orders
+FROM fact_orders_aggregate f
+JOIN dim_date d ON f.new_order_placement_date = d.new_date
+WHERE f.in_full = 0
+GROUP BY d.new_mmm_yy
+ORDER BY not_in_full_orders DESC LIMIT 1;
+```
+
+---
+
+# 🚚 Delivery Performance Analysis
+
+### 4️⃣ Find the difference between agreed delivery dates and actual delivery dates
+
+```sql
+SELECT order_id, new_agreed_delivery_date, new_actual_delivery_date,
+DATEDIFF(new_actual_delivery_date, new_agreed_delivery_date) AS days_difference
+FROM fact_order_lines;
+```
+
+---
+
+### 5️⃣ What is the OTIF performance for each city?
+
+```sql
+SELECT c.city, ROUND(AVG(f.otif) * 100, 2) AS otif_pct
+FROM fact_orders_aggregate f
+JOIN dim_customers c ON f.customer_id = c.customer_id
+GROUP BY c.city;
+```
+
+---
+
+### 6️⃣ What is the total number of orders delivered late?
+
+```sql
+SELECT COUNT(order_id) AS late_orders
+FROM fact_orders_aggregate
+WHERE on_time = 0;
+```
+
+---
+
+# 🛒 Product Analysis
+
+### 7️⃣ List the product categories and the number of unique products in each category
+
+```sql
+SELECT category, COUNT(DISTINCT product_id) AS unique_products
+FROM dim_products
+GROUP BY category;
+```
+
+---
+
+### 8️⃣ Identify the busiest week in terms of order placement
+
+```sql
+SELECT d.week_no, COUNT(f.order_id) AS order_count
+FROM fact_orders_aggregate f
+JOIN dim_date d ON f.new_order_placement_date = d.new_date
+GROUP BY d.week_no
+ORDER BY order_count DESC LIMIT 1;
+```
+
+---
+
+### 9️⃣ Which product categories perform best in terms of meeting OTIF targets?
+
+```sql
+SELECT p.category, ROUND(AVG(fol.`On Time In Full`) * 100, 2) AS otif_performance
+FROM fact_order_lines fol
+JOIN dim_products p ON fol.product_id = p.product_id
+GROUP BY p.category
+ORDER BY otif_performance DESC;
+```
+
+---
+
+# 📈 KPI Analysis
+
+### 🔟 What is the percentage of orders that met OTIF criteria?
+
+```sql
+SELECT ROUND(AVG(otif) * 100, 2) AS total_otif_pct
+FROM fact_orders_aggregate;
+```
+
+---
+
+### 1️⃣1️⃣ How many orders were placed on weekends versus weekdays?
+
+```sql
+SELECT 
+CASE WHEN DAYOFWEEK(new_order_placement_date) IN (1,7) THEN 'Weekend'
+ELSE 'Weekday'
+END AS day_type,
+COUNT(order_id) AS order_count
+FROM fact_orders_aggregate
+GROUP BY day_type;
+```
+
+---
+
+### 1️⃣2️⃣ How many orders were delivered on time but not in full?
+
+```sql
+SELECT COUNT(order_id) AS order_count
+FROM fact_orders_aggregate
+WHERE on_time = 1 AND in_full = 0;
+```
+
+---
+
+# 📦 Product Demand Insights
+
+### 1️⃣3️⃣ Which product category has the highest order quantity?
+
+```sql
+SELECT p.category, SUM(fol.order_qty) AS total_qty
+FROM fact_order_lines fol
+JOIN dim_products p ON fol.product_id = p.product_id
+GROUP BY p.category
+ORDER BY total_qty DESC LIMIT 1;
+```
+
+---
+
+# 👥 Customer Performance Analysis
+
+### 1️⃣4️⃣ Calculate the percentage of orders delivered on-time for each customer
+
+```sql
+SELECT customer_id,
+COUNT(order_id) AS total_orders,
+SUM(on_time) AS on_time_orders,
+ROUND((SUM(on_time)/COUNT(order_id))*100,2) AS on_time_percentage
+FROM fact_orders_aggregate
+GROUP BY customer_id;
+```
+
+---
+
+### 1️⃣5️⃣ Calculate the percentage of orders successfully delivered for each customer
+
+```sql
+SELECT customer_id,
+COUNT(order_id) AS total_orders,
+SUM(CASE WHEN delivery_qty = order_qty THEN 1 ELSE 0 END) AS successful_orders,
+ROUND(SUM(CASE WHEN delivery_qty = order_qty THEN 1 ELSE 0 END)/COUNT(order_id)*100,2) AS success_percentage
+FROM fact_order_lines
+GROUP BY customer_id;
+```
+
+---
+
+# 📊 Category Performance
+
+### 1️⃣6️⃣ For each product category, calculate the percentage of orders delivered on time
+
+```sql
+SELECT p.category,
+COUNT(f.order_id) AS total_orders,
+SUM(f.`On Time`) AS on_time_orders,
+ROUND(SUM(f.`On Time`)/COUNT(f.order_id)*100,2) AS on_time_percentage
+FROM fact_order_lines f
+JOIN dim_products p
+ON f.product_id = p.product_id
+GROUP BY p.category;
+```
+
+---
+
+# 🎯 Target vs Actual Performance
+
+### 1️⃣7️⃣ Show the customers who exceeded their on-time delivery target
+
+```sql
+WITH cte AS (
+SELECT c.customer_name,
+ROUND(AVG(f.on_time)*100,2) AS actual_ot,
+t.`ontime_target%`,
+ROUND(AVG(f.on_time)*100,2) - t.`ontime_target%` AS gap
+FROM fact_orders_aggregate f
+JOIN dim_targets_orders t
+ON f.customer_id = t.customer_id
+JOIN dim_customers c
+ON f.customer_id = c.customer_id
+GROUP BY c.customer_name, t.`ontime_target%`
+)
+
+SELECT * FROM cte;
+```
+
+---
+
+# 🔍 Advanced SQL Analysis
+
+### 1️⃣8️⃣ Find customers who placed orders with quantity greater than average order quantity
+
+```sql
+SELECT customer_id,
+SUM(order_qty) AS total_quantity
+FROM fact_order_lines
+GROUP BY customer_id
+HAVING SUM(order_qty) >
+(
+SELECT AVG(order_qty)
+FROM fact_order_lines
+);
+```
+
+---
+
+### 1️⃣9️⃣ Identify customers performing below target for both OT and IF
+
+```sql
+WITH CustomerPerformance AS (
+SELECT f.customer_id,
+AVG(f.on_time)*100 AS actual_ot,
+AVG(f.in_full)*100 AS actual_if,
+t.`ontime_target%`,
+t.`infull_target%`
+FROM fact_orders_aggregate f
+JOIN dim_targets_orders t
+ON f.customer_id = t.customer_id
+GROUP BY f.customer_id, t.`ontime_target%`, t.`infull_target%`
+)
+
+SELECT *
+FROM CustomerPerformance
+WHERE actual_ot < `ontime_target%`
+AND actual_if < `infull_target%`;
+```
+
+---
+
+### 2️⃣0️⃣ Customers with OT and IF performance below 80%
+
+```sql
+WITH customer_performance AS (
+SELECT customer_id,
+ROUND(AVG(on_time)*100,2) AS on_time_percentage,
+ROUND(AVG(in_full)*100,2) AS in_full_percentage
+FROM fact_orders_aggregate
+GROUP BY customer_id
+)
+
+SELECT *
+FROM customer_performance
+WHERE on_time_percentage < 80
+AND in_full_percentage < 80;
+```
+
+---
+
+### 2️⃣1️⃣ Monthly OT% and IF% per customer compared with targets
+
+```sql
+SELECT d.new_mmm_yy, c.customer_name,
+ROUND(AVG(f.on_time)*100,2) AS monthly_ot_pct,
+t.`ontime_target%`,
+ROUND(AVG(f.in_full)*100,2) AS monthly_if_pct,
+t.`infull_target%`
+FROM fact_orders_aggregate f
+JOIN dim_date d ON f.new_order_placement_date = d.new_date
+JOIN dim_customers c ON f.customer_id = c.customer_id
+JOIN dim_targets_orders t ON f.customer_id = t.customer_id
+GROUP BY d.new_mmm_yy, c.customer_name, t.`ontime_target%`, t.`infull_target%`;
+```
+
+---
+
+### 2️⃣2️⃣ Categories with highest and lowest on-time delivery rates
+
+```sql
+SELECT p.category,
+ROUND(AVG(fol.`On Time`)*100,2) AS on_time_pct,
+COUNT(fol.order_id) AS total_orders
+FROM fact_order_lines fol
+JOIN dim_products p
+ON fol.product_id = p.product_id
+GROUP BY p.category
+HAVING total_orders > 200
+ORDER BY on_time_pct DESC;
 
 ---
 
