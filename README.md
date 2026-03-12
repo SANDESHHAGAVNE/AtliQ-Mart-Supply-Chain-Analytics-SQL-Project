@@ -1,4 +1,4 @@
-# AtliQ-Mart-Supply-Chain-Analytics-SQL-Project
+
 
 # 🚚 AtliQ Mart Supply Chain Analytics SQL Project
 
@@ -624,6 +624,7 @@ ON fol.product_id = p.product_id
 GROUP BY p.category
 HAVING total_orders > 200
 ORDER BY on_time_pct DESC;
+```
 
 ---
 
