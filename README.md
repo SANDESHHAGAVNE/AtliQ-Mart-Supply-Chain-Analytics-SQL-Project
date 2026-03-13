@@ -1,5 +1,3 @@
-
-
 # 🚚 AtliQ Mart Supply Chain Analytics SQL Project
 
 ---
@@ -294,7 +292,9 @@ SET new_order_placement_date =
 STR_TO_DATE(order_placement_date,'%d-%b-%y');
 ```
 
----# 🧩 SQL Business Questions Solved
+---
+
+# 🧩 SQL Business Questions Solved
 
 
 The analysis focuses on **order performance, delivery efficiency, product demand, and customer service metrics**.
