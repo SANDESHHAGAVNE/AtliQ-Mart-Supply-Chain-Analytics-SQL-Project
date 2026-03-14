@@ -330,7 +330,7 @@ ORDER BY not_in_full_orders DESC LIMIT 1;
 
 # 🚛 Delivery Performance Analysis
 
-### 4️⃣ Find the difference between agreed delivery dates and actual delivery dates
+### 4️⃣ Find the difference between agreed delivery dates and actual delivery dates for all orders
 
 ```sql
 SELECT order_id, new_agreed_delivery_date, new_actual_delivery_date,
@@ -363,7 +363,7 @@ WHERE on_time = 0;
 
 # 🛒 Product Analysis
 
-### 7️⃣ List the product categories and the number of unique products in each category
+### 7️⃣ List the product categories along with the number of unique products in each category
 
 ```sql
 SELECT category, COUNT(DISTINCT product_id) AS unique_products
@@ -461,7 +461,7 @@ GROUP BY customer_id;
 
 ---
 
-### 1️⃣5️⃣ Calculate the percentage of orders successfully delivered for each customer
+### 1️⃣5️⃣ Calculate the percentage of orders that were successfully delivered (i.e., delivered_qty = order_qty) for each customer
 
 ```sql
 SELECT customer_id,
@@ -476,7 +476,7 @@ GROUP BY customer_id;
 
 # 🏷️ Category Performance
 
-### 1️⃣6️⃣ For each product category, calculate the percentage of orders delivered on time
+### 1️⃣6️⃣ For each product category, calculate the percentage of orders that were delivered on time
 
 ```sql
 SELECT p.category,
@@ -493,7 +493,7 @@ GROUP BY p.category;
 
 # 🎯 Target vs Actual Performance
 
-### 1️⃣7️⃣ Show the customers who exceeded their on-time delivery target
+### 1️⃣7️⃣ Show the customers who exceeded their "ontime_target %" based on their actual delivery performance
 
 ```sql
 WITH cte AS (
@@ -516,7 +516,7 @@ SELECT * FROM cte;
 
 # 🔍 Advanced SQL Analysis
 
-### 1️⃣8️⃣ Find customers who placed orders with quantity greater than average order quantity
+### 1️⃣8️⃣ Find customers who placed orders with total product quantity greater than the average order quantity
 
 ```sql
 SELECT customer_id,
@@ -532,7 +532,7 @@ FROM fact_order_lines
 
 ---
 
-### 1️⃣9️⃣ Identify customers performing below target for both OT and IF
+### 1️⃣9️⃣ Create a CTE to calculate delivery performance for each customer. Then, use the CTE to select customers whose performance is below the target for both on-time and in-full delivery
 
 ```sql
 WITH CustomerPerformance AS (
@@ -555,7 +555,7 @@ AND actual_if < `infull_target%`;
 
 ---
 
-### 2️⃣0️⃣ Customers with OT and IF performance below 80%
+### 2️⃣0️⃣ Use a CTE to calculate the percentage of orders delivered on-time and in-full for each customer, then select the customers with performance below 80% for both metrics
 
 ```sql
 WITH customer_performance AS (
@@ -574,7 +574,7 @@ AND in_full_percentage < 80;
 
 ---
 
-### 2️⃣1️⃣ Monthly OT% and IF% per customer compared with targets
+### 2️⃣1️⃣ For each customer, calculate the monthly percentage of on-time and in-full deliveries. Compare these results against the targets to identify any underperforming customers
 
 ```sql
 SELECT d.new_mmm_yy, c.customer_name,
@@ -591,7 +591,7 @@ GROUP BY d.new_mmm_yy, c.customer_name, t.`ontime_target%`, t.`infull_target%`;
 
 ---
 
-### 2️⃣2️⃣ Categories with highest and lowest on-time delivery rates
+### 2️⃣2️⃣ Identify the categories with the highest and lowest on-time delivery rates over the past year. Show the on-time percentage for each category and filter out categories with fewer than 200 total orders.
 
 ```sql
 SELECT p.category,
