@@ -142,7 +142,7 @@ Order-level delivery metrics.
 Relationship between the tables:
 
 ```
-![ER Diagram](https://raw.githubusercontent.com/SANDESHHAGAVNE/AtliQ-Mart-Supply-Chain-Analytics-SQL-Project/main/ER%20Diagram.png)
+![ER Diagram]([https://raw.githubusercontent.com/SANDESHHAGAVNE/AtliQ-Mart-Supply-Chain-Analytics-SQL-Project/main/ER%20Diagram.png](https://github.com/SANDESHHAGAVNE/AtliQ-Mart-Supply-Chain-Analytics-SQL-Project/blob/2eaa2b7d9694d23716168c39c4004b6177867cf0/ER%20Diagram.png))
 
 ```
 
