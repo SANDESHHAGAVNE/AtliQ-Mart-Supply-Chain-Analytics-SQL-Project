@@ -137,7 +137,7 @@ Order-level delivery metrics.
 
 ---
 
-# 4️⃣ ER Diagram
+# 🛢️ ER Diagram
 
 Relationship between the tables:
 
