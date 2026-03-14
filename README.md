@@ -142,31 +142,9 @@ Order-level delivery metrics.
 Relationship between the tables:
 
 ```
-dim_customers
-     |
-     | customer_id
-     |
-fact_orders_aggregate
-     |
-     | order_id
-     |
-fact_order_lines
-     |
-     | product_id
-     |
-dim_products
+## ER Diagram
 
-fact_orders_aggregate
-     |
-     | customer_id
-     |
-dim_targets_orders
-
-fact_orders_aggregate
-     |
-     | new_order_placement_date
-     |
-dim_date
+![ER Diagram](images/erd_diagram.png)
 ```
 
 This schema enables analysis across **customers, products, delivery performance, and time**.
