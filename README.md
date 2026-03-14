@@ -142,7 +142,10 @@ Order-level delivery metrics.
 Relationship between the tables:
 
 ```
-![ER_Diagram](https://github.com/SANDESHHAGAVNE/AtliQ-Mart-Supply-Chain-Analytics-SQL-Project/blob/main/ER%20Diagram.png?raw=true)
+<h2>ER Diagram</h2>
+
+<img src="https://raw.githubusercontent.com/SANDESHHAGAVNE/AtliQ-Mart-Supply-Chain-Analytics-SQL-Project/main/ER%20Diagram.png" width="900">
+
 ```
 
 This schema enables analysis across **customers, products, delivery performance, and time**.
