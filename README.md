@@ -142,9 +142,11 @@ Order-level delivery metrics.
 Relationship between the tables:
 
 ```
-## ER Diagram
 
-![ER Diagram](images/erd_diagram.png)
+<h2>ER Diagram</h2>
+
+<img src="erd_diagram.png" width="800">
+
 ```
 
 This schema enables analysis across **customers, products, delivery performance, and time**.
