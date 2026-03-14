@@ -137,7 +137,7 @@ Order-level delivery metrics.
 
 ---
 
-# 🗺️ ER Diagram
+# 🛢️ ER Diagram
 
 Relationship between the tables:
 
@@ -289,7 +289,7 @@ These queries demonstrate the use of:
 
 ---
 
-# 📊 Order Analysis
+# 📦 Order Analysis
 
 ### 1️⃣ How many orders were placed in each month?
 
@@ -328,7 +328,7 @@ ORDER BY not_in_full_orders DESC LIMIT 1;
 
 ---
 
-# 🚚 Delivery Performance Analysis
+# 🚛 Delivery Performance Analysis
 
 ### 4️⃣ Find the difference between agreed delivery dates and actual delivery dates
 
@@ -432,7 +432,7 @@ WHERE on_time = 1 AND in_full = 0;
 
 ---
 
-# 📦 Product Demand Insights
+# 🛍️ Product Demand Insights
 
 ### 1️⃣3️⃣ Which product category has the highest order quantity?
 
@@ -446,7 +446,7 @@ ORDER BY total_qty DESC LIMIT 1;
 
 ---
 
-# 👥 Customer Performance Analysis
+# 🧑‍🤝‍🧑 Customer Performance Analysis
 
 ### 1️⃣4️⃣ Calculate the percentage of orders delivered on-time for each customer
 
@@ -474,7 +474,7 @@ GROUP BY customer_id;
 
 ---
 
-# 📊 Category Performance
+# 🏷️ Category Performance
 
 ### 1️⃣6️⃣ For each product category, calculate the percentage of orders delivered on time
 
