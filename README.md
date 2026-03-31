@@ -139,17 +139,17 @@ Order-level delivery metrics.
 
 # 🏗️ Database Architecture & ETL
 
-The foundation of this project involved transforming **migrating disconnected CSV files into a structured relational database** for efficient analysis.
+The foundation of this project involved transforming **migrating disconnected CSV files into a dimensional model** for analytical processing.
 
 ### 🔧 Key Steps:
 
-* **Schema Design:** Built 6 interconnected tables with established **Primary Keys & Foreign Keys**.
-* **Data Integration:** Combined multiple datasets into a unified structure.
+* **Schema Design:** Built a Star Schema with 2 fact tables and 4 dimension tables with established **Primary Keys & Foreign Keys**.
+* **Data Integration:** Combined multiple datasets into a unified analytical structure.
 * **ETL Process:** Cleaned, transformed, and loaded raw data into MySQL tables.
 * **Data Standardization:** Ensured consistent formats for dates and categorical fields.
 
 
-<h2 align="center">Database Schema</h2>
+<h2 align="center">Star Schema</h2>
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/SANDESHHAGAVNE/AtliQ-Mart-Supply-Chain-Analytics-SQL-Project/main/ER%20Diagram.png" width="900">
